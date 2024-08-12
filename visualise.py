@@ -62,7 +62,7 @@ class Sim:
             plt.close()
 
 def main():
-    filename = "outs/test_out.sim"
+    filename = "sims/code_out.sim"
     sim = Sim(filename)
     sim.visualise("vis")
 
