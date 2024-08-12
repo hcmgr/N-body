@@ -71,6 +71,9 @@ class Sim:
             plt.savefig(f'{output_dir}/timestep_{timestep}.png')
             plt.close()
     
+    def animate():
+        pass
+    
     """
     Takes x from range [prev_min, prev_max] to range [after_min, after_max]
     """
