@@ -44,7 +44,7 @@ Updates positions of all particles over given timestep 'dt'
 void update_positions(std::vector<Particle> &particles, double dt) {
     size_t N = particles.size();
 
-    std::vector<std::vector<double>> ax(N, std::vector<double>(2, 0.0));
+    std::vector<std::vector<double>> acc(N, std::vector<double>(2, 0.0));
     
     // Calculate forces and update acceleration
     for (size_t i = 0; i < N; ++i) {
@@ -54,18 +54,18 @@ void update_positions(std::vector<Particle> &particles, double dt) {
             double r_mag = std::sqrt(dx * dx + dy * dy) + EPSILON;
             double force = G * particles[i].mass * particles[j].mass / (r_mag * r_mag);
 
-            ax[i][0] += force * (dx / r_mag) / particles[i].mass;
-            ax[i][1] += force * (dy / r_mag) / particles[i].mass;
+            acc[i][0] += force * (dx / r_mag) / particles[i].mass;
+            acc[i][1] += force * (dy / r_mag) / particles[i].mass;
 
-            ax[j][0] -= force * (dx / r_mag) / particles[j].mass;
-            ax[j][1] -= force * (dy / r_mag) / particles[j].mass;
+            acc[j][0] -= force * (dx / r_mag) / particles[j].mass;
+            acc[j][1] -= force * (dy / r_mag) / particles[j].mass;
         }
     }
 
     // Update velocities and positions
     for (size_t i = 0; i < N; ++i) {
-        particles[i].vx += ax[i][0] * dt;
-        particles[i].vy += ax[i][1] * dt;
+        particles[i].vx += acc[i][0] * dt;
+        particles[i].vy += acc[i][1] * dt;
 
         particles[i].x += particles[i].vx * dt;
         particles[i].y += particles[i].vy * dt;
