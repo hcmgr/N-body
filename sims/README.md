@@ -1,11 +1,13 @@
-sims/ is where we dump output files (.sim files) from our simulation
+`sims/` is where we dump output files (`.sim` files) from our simulation.
 
-.sim - custom output file format for N-body simulations
+`.sim` - Custom Output File Format for N-body Simulations
 
-Format
+### Format
 [N] // number of particles
 [X] // width of simulation area
 [Y] // height of simulation area
+[MIN_MASS] // minimum particle mass
+[MAX_MASS] // maximum particle mass
 
 [timestep 0]
 [x1 y1 m1] // first particle
@@ -20,3 +22,4 @@ Format
 [xN yN mN] // Nth particle
 
 ...
+EOF

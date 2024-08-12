@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "utils.hpp"
+
 #define G           6.67430e-11 // gravitational constant
 #define EPSILON     1e-10       // avoid dividing by zero
 
@@ -18,6 +20,7 @@ class Model {
 public:
     int N; // num particles
     int X, Y; // sim dimensions
+    int MIN_MASS, MAX_MASS;
     double dt;
     double timesteps; 
 
@@ -25,19 +28,23 @@ public:
 
     std::ofstream outputFile;
 
-    Model(int N, int X, int Y, double dt, double timesteps, std::string outputFileName) {
+    Model(int N, int X, int Y, int MIN_MASS, int MAX_MASS, 
+        double dt, double timesteps, std::string outputFileName) {
+
         this->N = N;
         this->X = X;
         this->Y = Y;
+        this->MIN_MASS = MIN_MASS;
+        this->MAX_MASS = MAX_MASS;
         this->dt = dt;
         this->timesteps = timesteps;
 
         this->particles = std::vector<Particle>(N);
-        init_particles_random(10);
+        init_particles_random(MIN_MASS, MAX_MASS);
 
         // dump model metadata and initial state to output file
         this->outputFile.open(outputFileName, std::ios::out | std::ios::trunc);
-        dump_model_metadata();
+        dump_metadata();
         dump_timestep_data(0);
     }
 
@@ -49,13 +56,13 @@ public:
         - random mass within range [0, MAX_MASS]
         - 0 velocity 
     */
-    void init_particles_random(int MAX_MASS) {
+    void init_particles_random(int MIN_MASS, int MAX_MASS) {
         for (int i = 0; i < N; i++) {
             Particle p;
 
-            p.mass = rand() % MAX_MASS;
-            p.x = rand() % X;
-            p.y = rand() % Y;
+            p.mass = Utils::bounded_rand(MIN_MASS, MAX_MASS);
+            p.x = Utils::bounded_rand(0, X);
+            p.y = Utils::bounded_rand(0, Y);
             p.vx = 0;
             p.vy = 0;
 
@@ -98,10 +105,12 @@ public:
         dump_timestep_data(timestepNum);
     }
 
-    void dump_model_metadata() {
+    void dump_metadata() {
         outputFile << this->N << std::endl;
         outputFile << this->X << std::endl;
         outputFile << this->Y << std::endl;
+        outputFile << this->MIN_MASS << std::endl;
+        outputFile << this->MAX_MASS << std::endl;
         outputFile << std::endl;
     }
 
@@ -130,17 +139,17 @@ int main() {
     srand(time(0));
 
     // particle setup
-    int N = 50;
-    int X = 100, Y = 100; // m
-    int MAX_MASS = 10; // kg
+    int N = 10;
+    int X = 5, Y = 5; // m
+    int MIN_MASS = 1000, MAX_MASS = 10000;
 
     // time
-    double timesteps = 5;
+    double timesteps = 10;
     double dt = 0.1;
 
     // dump file
     std::string outputFileName = "sims/code_out.sim";
 
-    Model model = Model(N, X, Y, dt, timesteps, outputFileName);
+    Model model = Model(N, X, Y, MIN_MASS, MAX_MASS, dt, timesteps, outputFileName);
     run_model(model);
 }
